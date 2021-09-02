@@ -1,4 +1,4 @@
-package main
+package accessor
 
 import "time"
 
