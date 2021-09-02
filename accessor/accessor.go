@@ -144,6 +144,7 @@ func (a Accessor) GetMarketData(asset string, query ...Query) func() (GetMarketD
 	}
 }
 
+// Currently there is not a detailed json to uses as reference so it returns an interface{}
 func (a Accessor) GetAssetTimeseriesMetrics(asset string, query ...Query) func() (interface{}, error) {
 	var api string = "/v1/assets/metrics"
 	api = handleQuery(api, query...)
