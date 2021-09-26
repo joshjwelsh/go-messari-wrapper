@@ -684,3 +684,48 @@ type GetMarketDataResponse struct {
 		} `json:"market_data"`
 	} `json:"data"`
 }
+
+type GetTimeseriesResponse struct {
+	Status struct {
+		Elapsed   int       `json:"elapsed"`
+		Timestamp time.Time `json:"timestamp"`
+	} `json:"status"`
+	Data struct {
+		ID                  string        `json:"id"`
+		Symbol              string        `json:"symbol"`
+		Name                string        `json:"name"`
+		Slug                string        `json:"slug"`
+		ContractAddresses   []interface{} `json:"contract_addresses"`
+		InternalTempAgoraID string        `json:"_internal_temp_agora_id"`
+		Parameters          struct {
+			AssetKey        string    `json:"asset_key"`
+			AssetID         string    `json:"asset_id"`
+			Start           time.Time `json:"start"`
+			End             time.Time `json:"end"`
+			Interval        string    `json:"interval"`
+			Order           string    `json:"order"`
+			Format          string    `json:"format"`
+			TimestampFormat string    `json:"timestamp_format"`
+			Columns         []string  `json:"columns"`
+		} `json:"parameters"`
+		Schema struct {
+			MetricID     string `json:"metric_id"`
+			Name         string `json:"name"`
+			Description  string `json:"description"`
+			ValuesSchema struct {
+				Timestamp string `json:"timestamp"`
+				Open      string `json:"open"`
+				High      string `json:"high"`
+				Low       string `json:"low"`
+				Close     string `json:"close"`
+				Volume    string `json:"volume"`
+			} `json:"values_schema"`
+			MinimumInterval   string `json:"minimum_interval"`
+			SourceAttribution []struct {
+				Name string `json:"name"`
+				URL  string `json:"url"`
+			} `json:"source_attribution"`
+		} `json:"schema"`
+		Values [][]float64 `json:"values"`
+	} `json:"data"`
+}

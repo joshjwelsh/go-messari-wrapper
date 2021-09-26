@@ -47,7 +47,7 @@ func (a Accessor) GetAllAssets(query ...Query) func() (GetAllAssetsResponse, err
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
@@ -75,7 +75,7 @@ func (a Accessor) GetAsset(asset string, query ...Query) func() (GetAssetRespons
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
@@ -96,7 +96,7 @@ func (a Accessor) GetProfile(asset string, query ...Query) func() (GetProfileRes
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
@@ -117,7 +117,7 @@ func (a Accessor) GetMetrics(asset string, query ...Query) func() (GetMetricsRes
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
@@ -138,7 +138,7 @@ func (a Accessor) GetMarketData(asset string, query ...Query) func() (GetMarketD
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
@@ -160,8 +160,30 @@ func (a Accessor) GetAssetTimeseriesMetrics(asset string, query ...Query) func()
 		defer body.Close()
 		err = json.NewDecoder(body).Decode(&response)
 		if err != nil {
-			return response, fmt.Errorf("Error decoding response body: %v", err)
+			return response, fmt.Errorf("error decoding response body: %v", err)
 		}
 		return response, nil
 	}
+}
+
+func (a Accessor) GetPriceTimeseries(asset string, query ...Query) func() (GetTimeseriesResponse, error) {
+	var api string = fmt.Sprintf("/v1/assets/%v/metrics/price/time-series", asset)
+	api = handleQuery(api, query...)
+	return func() (GetTimeseriesResponse, error) {
+		var response GetTimeseriesResponse
+		url := a.URL + api
+		res, err := http.Get(url)
+		if err != nil {
+			return response, fmt.Errorf("http.Get(%v) returned an error: %v", url, err)
+		}
+		body := res.Body
+		defer body.Close()
+		err = json.NewDecoder(body).Decode(&response)
+		if err != nil {
+			return response, fmt.Errorf("error decoding response body: %v", err)
+
+		}
+		return response, nil
+	}
+
 }

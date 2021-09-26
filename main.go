@@ -15,14 +15,20 @@ func check(e error) {
 	}
 }
 func main() {
-	accessor := accessor.NewAccessor()
+	accessor_ := accessor.NewAccessor()
 
 	// query := accessor.FieldQuery{
+
 	// 	Field: "?fields=id,slug,symbol,metrics/market_data/price_usd",
 	// }
 
-	result, err := accessor.GetAsset("eth")()
+	ts_query := accessor.TimeseriesQuery{
+		Start:    "start=2021-04-15",
+		End:      "end=2021-05-15",
+		Interval: INTERVAL_1DY,
+	}
+	result, err := accessor_.GetPriceTimeseries("ETH", ts_query)()
 	check(err)
-	fmt.Println(result.Data)
+	fmt.Println(result.Data.Schema)
 
 }
