@@ -22,23 +22,34 @@ To see what api are available check out accessor.go.
 
 ## Example code 
 ```
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/joshjwelsh/go-messari-wrapper/accessor"
+)
 
 func check(e error) {
 	if e != nil {
-		log.Fatalf("Main error: %v", e)
+		log.Fatalf("Fatal error: %v", e)
 	}
 }
-func main() {
-	accessor_ := accessor.NewAccessor()
 
+func main() {
+	fmt.Printf("")
 	ts_query := accessor.TimeseriesQuery{
 		Start:    "start=2021-04-15",
-		End:      "end=2021-05-15",
-		Interval: INTERVAL_1DY,
+		End:      "end=2021-09-15",
+		Interval: "1wk",
 	}
-	result, err := accessor_.GetPriceTimeseries("ETH", ts_query)()
+	accessor_ := accessor.NewAccessor()
+	ts, err := accessor_.GetPriceTimeseries("ETH", ts_query)()
 	check(err)
-	fmt.Println(result.Data.Schema)
+
+	fmt.Println(ts.Data)
 
 }
+
 ```
