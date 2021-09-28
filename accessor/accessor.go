@@ -19,6 +19,7 @@ func NewAccessor() Accessor {
 	}
 }
 
+// add queries to url
 func handleQuery(api string, query ...Query) string {
 	for _, q := range query {
 		if q.Active() {
