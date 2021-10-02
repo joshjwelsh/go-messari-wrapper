@@ -5,18 +5,34 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/joshjwelsh/go-messari-wrapper/auth"
 )
 
 var verbose bool = true
 
 type Accessor struct {
-	URL string
+	URL  string
+	Auth auth.Config
 }
 
 func NewAccessor() Accessor {
 	return Accessor{
 		URL: "https://data.messari.io/api",
 	}
+}
+
+func apiCall(a Accessor, url string) (*http.Response, error) {
+	type response *http.Response
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return req.Response, fmt.Errorf("Api call failed creating new http request: %v", err)
+	}
+	if secret := a.Auth.Get(); secret != "" {
+		req.Header.Add("x-messari-api-key", secret)
+	}
+	return client.Do(req)
 }
 
 // add queries to url
@@ -38,7 +54,7 @@ func (a Accessor) GetAllAssets(query ...Query) func() (GetAllAssetsResponse, err
 	return func() (GetAllAssetsResponse, error) {
 		var response GetAllAssetsResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -61,7 +77,7 @@ func (a Accessor) GetAsset(asset string, query ...Query) func() (GetAssetRespons
 	return func() (GetAssetResponse, error) {
 		var response GetAssetResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -88,7 +104,7 @@ func (a Accessor) GetProfile(asset string, query ...Query) func() (GetProfileRes
 	return func() (GetProfileResponse, error) {
 		var response GetProfileResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -109,7 +125,7 @@ func (a Accessor) GetMetrics(asset string, query ...Query) func() (GetMetricsRes
 	return func() (GetMetricsResponse, error) {
 		var response GetMetricsResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -130,7 +146,7 @@ func (a Accessor) GetMarketData(asset string, query ...Query) func() (GetMarketD
 	return func() (GetMarketDataResponse, error) {
 		var response GetMarketDataResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -152,7 +168,7 @@ func (a Accessor) GetAssetTimeseriesMetrics(asset string, query ...Query) func()
 	return func() (interface{}, error) {
 		var response interface{}
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) return an error: %v", url, err)
@@ -173,7 +189,7 @@ func (a Accessor) GetPriceTimeseries(asset string, query ...Query) func() (GetTi
 	return func() (GetTimeseriesResponse, error) {
 		var response GetTimeseriesResponse
 		url := a.URL + api
-		res, err := http.Get(url)
+		res, err := apiCall(a, url)
 		if err != nil {
 			return response, fmt.Errorf("http.Get(%v) returned an error: %v", url, err)
 		}
